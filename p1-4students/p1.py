@@ -32,19 +32,32 @@ def checkBoardImg(im:np.ndarray,m:int=5,n:int=3):
     for h in range(v%2,n+1,2):
         indice_col_ini = n_cols * (h-1)
         indice_col_fin =  n_cols * h
-        # print((v,h),(indice_fila_ini,indice_fila_fin),(indice_col_ini,indice_col_fin))
-        img[indice_fila_ini:indice_fila_fin,indice_col_ini:indice_col_fin] = np.full(img[indice_fila_ini:indice_fila_fin,indice_col_ini:indice_col_fin].shape,255) - img[indice_fila_ini:indice_fila_fin,indice_col_ini:indice_col_fin]
+        img[indice_fila_ini:indice_fila_fin,indice_col_ini:indice_col_fin] = 255 - img[indice_fila_ini:indice_fila_fin,indice_col_ini:indice_col_fin]
   return img
 
 def testCheckBoardImg(im:np.ndarray):
     im2 = checkBoardImg(im)
     return [im2]
 
-def darkenImg(im,p=2):
-    return (im ** float(p)) / (255 ** (p - 1)) # try without the float conversion and see what happens
+def applyInEachDim(fun):
+    def wrapper(*args,**kargs):
+        if len(args[0].shape) == 2:
+            return fun(*args,**kargs)
+        else:
+            res = args[0].copy()
+            for i in range(args[0].shape[2]):
+                res[:,:,i] = fun(args[0][:,:,i],*args[1:],**kargs)
+            return res
+    return wrapper
 
+@applyInEachDim
+def darkenImg(im:np.ndarray,p=2)->np.ndarray:
+    return (im ** float(p)) / (255 ** (p - 1))
+   
+@applyInEachDim
 def brightenImg(im:np.ndarray,p=2):
     return np.power(255.0 ** (p - 1) * im, 1. / p)  # notice this NumPy function is different to the scalar math.pow(a,b)
+  
 
 
 def testDarkenImg(im):
@@ -72,15 +85,15 @@ path_input = './imgs-P1/'
 path_output = './imgs-out-P1/'
 bAllFiles = True
 formats = ['ppm','pgm']
-current = 1
+current = 0
 if bAllFiles:
     files = glob.glob(path_input + f"*.{formats[current]}")
 else:
-    files = [path_input + 'iglesia.pgm'] # iglesia,huesos
+    files = [path_input + 'toys.ppm'] # iglesia,huesos
 
-bAllTests = False
+bAllTests = True
 if bAllTests:
-    tests = ['testHistEq', 'testBrightenImg', 'testDarkenImg']  # 'testHistEq']:#''testDarkenImg']:
+    tests = ['testHistEq', 'testBrightenImg', 'testDarkenImg','testCheckBoardImg']  # 'testHistEq']:#''testDarkenImg']:
 else:
     tests = ['testCheckBoardImg']#['testBrightenImg']
 nameTests = {'testHistEq': u"Ecualización de histograma", # Unicode (u) para tildes y otros carácteres
