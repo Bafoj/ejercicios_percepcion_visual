@@ -22,6 +22,19 @@ def testHistEq(im):
     imgs = [im, im2]
     return [im2, cdf]
 
+def applyInEachDim(fun):
+    def wrapper(*args,**kargs):
+        if len(args[0].shape) == 2:
+            return fun(*args,**kargs)
+        else:
+            res = args[0].copy()
+            for i in range(args[0].shape[2]):
+                res[:,:,i] = fun(args[0][:,:,i],*args[1:],**kargs)
+            return res
+    return wrapper
+
+
+@applyInEachDim
 def checkBoardImg(im:np.ndarray,m:int=5,n:int=3):
   img = im.copy()
   n_filas = math.ceil(img.shape[0] /m)
@@ -39,16 +52,6 @@ def testCheckBoardImg(im:np.ndarray):
     im2 = checkBoardImg(im)
     return [im2]
 
-def applyInEachDim(fun):
-    def wrapper(*args,**kargs):
-        if len(args[0].shape) == 2:
-            return fun(*args,**kargs)
-        else:
-            res = args[0].copy()
-            for i in range(args[0].shape[2]):
-                res[:,:,i] = fun(args[0][:,:,i],*args[1:],**kargs)
-            return res
-    return wrapper
 
 @applyInEachDim
 def darkenImg(im:np.ndarray,p=2)->np.ndarray:
