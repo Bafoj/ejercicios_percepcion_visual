@@ -61,7 +61,20 @@ def darkenImg(im:np.ndarray,p=2)->np.ndarray:
 def brightenImg(im:np.ndarray,p=2):
     return np.power(255.0 ** (p - 1) * im, 1. / p)  # notice this NumPy function is different to the scalar math.pow(a,b)
   
+def multiHist(im:np.ndarray,n:int)->list[np.ndarray]:
+    if n <= 1:
+        hist, _ =np.histogram(im.flatten(),3)
+        return [hist]
+    else:
+        pf = math.ceil(im.shape[0]/2)
+        pc = math.ceil(im.shape[1]/2)
+        sol = [np.histogram(im.flatten(),3)]
+        for y in range(0,im.shape[0],pf):
+            for x in range(0,im.shape[1],pc):
+                sol.extend(multiHist(im[y:y+pf,x:x + pc],n-1))
+        return sol
 
+    
 
 def testDarkenImg(im):
     im2 = darkenImg(im,p=2) # ¿Es diferente "p=2" aquí que en la definición de la función? ¿Se puede no poner "p="?
