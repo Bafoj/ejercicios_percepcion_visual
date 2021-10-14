@@ -61,14 +61,15 @@ def darkenImg(im:np.ndarray,p=2)->np.ndarray:
 def brightenImg(im:np.ndarray,p=2):
     return np.power(255.0 ** (p - 1) * im, 1. / p)  # notice this NumPy function is different to the scalar math.pow(a,b)
   
-def multiHist(im:np.ndarray,n:int)->list[np.ndarray]:
+def multiHist(im:np.ndarray,n:int = 2)->list[np.ndarray]:
+    
     if n <= 1:
         hist, _ =np.histogram(im.flatten(),3)
         return [hist]
     else:
         pf = math.ceil(im.shape[0]/2)
         pc = math.ceil(im.shape[1]/2)
-        sol = [np.histogram(im.flatten(),3)]
+        sol = [np.histogram(im.flatten(),3)[0]]
         for y in range(0,im.shape[0],pf):
             for x in range(0,im.shape[1],pc):
                 sol.extend(multiHist(im[y:y+pf,x:x + pc],n-1))
@@ -101,25 +102,27 @@ path_input = './imgs-P1/'
 path_output = './imgs-out-P1/'
 bAllFiles = True
 formats = ['ppm','pgm']
-current = 0
+current = 1
 if bAllFiles:
     files = glob.glob(path_input + f"*.{formats[current]}")
 else:
-    files = [path_input + 'toys.ppm'] # iglesia,huesos
+    files = [path_input + 'iglesia.pgm'] # iglesia,huesos
 
 bAllTests = True
 if bAllTests:
     tests = ['testHistEq', 'testBrightenImg', 'testDarkenImg','testCheckBoardImg']  # 'testHistEq']:#''testDarkenImg']:
 else:
-    tests = ['testCheckBoardImg']#['testBrightenImg']
+    tests = ['multiHist']#['testBrightenImg']
 nameTests = {'testHistEq': u"Ecualización de histograma", # Unicode (u) para tildes y otros carácteres
              'testBrightenImg': 'Aclarar imagen',
              'testDarkenImg': 'Oscurecer imagen',
-             'testCheckBoardImg':'Cuadricular imagen'}
+             'testCheckBoardImg':'Cuadricular imagen',
+             'multiHist': 'Calculando multihistograms'}
 suffixFiles = {'testHistEq': '_heq',
                'testBrightenImg': '_br',
                'testDarkenImg': '_dk',
-                'testCheckBoardImg':'_cuad'}
+                'testCheckBoardImg':'_cuad',
+                'multiHist':'_mh'}
 
 bSaveResultImgs = True
 
@@ -136,9 +139,13 @@ def doTests():
                 vpu.showPlusInfo(out[1])
             if bSaveResultImgs:
                 saveOutImg(imfile, test, im2)
+        
 
 
 
 if __name__== "__main__":
-    doTests()
+    # doTests()
+    img = np.array(Image.open('imgs-P1/iglesia.pgm').convert('L'))
+    # print(type(multiHist(img)))
+    vpu.showInGrid(multiHist(img,4))
 
