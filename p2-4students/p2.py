@@ -10,9 +10,21 @@ import math as math
 import glob
 import os
 import sys
+from scipy import signal
 
 sys.path.append("../p1-4students")
 import visualPercepUtils as vpu
+
+
+def evaluate_time(fun):
+    import time
+    def wrapper(*args,**kwargs):
+        start = time.time()
+        res = fun(*args,**kwargs)
+        end = time.time()
+        print(f"{fun.__name__} - Total time: {end-start}")
+        return res
+    return wrapper
 
 
 # -----------------------
@@ -83,6 +95,7 @@ def averageFilterSep(im, filterSize):
     mask = np.ones((1, filterSize))
     mask =mask / filterSize
     s= filters.convolve(im, mask)
+    print(mask.shape,mask.T.shape)
     return filters.convolve(s,mask.T)
 
 
@@ -96,9 +109,9 @@ def testAverageFilter(im_clean, params):
             b = averageFilterSep(im_dirty, filterSize)
             imgs.append(a)
             imgs.append(b)
-            print(a)
-            print(b)
-            print(np.all(a == b))
+            # print(a)
+            # print(b)
+            # print(np.all(a == b))
 
     return imgs
 
@@ -106,10 +119,24 @@ def testAverageFilter(im_clean, params):
 # -----------------
 # Gaussian filter
 # -----------------
-
+@evaluate_time
 def gaussianFilter(im, sigma=5):
     # im is PIL image
     return filters.gaussian_filter(im, sigma)
+
+@evaluate_time
+def explicitGaussianFilter(im, sigma=5):
+    # im is PIL image
+    gaus1d = signal.windows.gaussian(15,std = sigma)
+    gauss2d = np.outer(gaus1d,gaus1d.T)
+    return filters.convolve(im,gauss2d)
+
+@evaluate_time
+def explicitGaussianFilterSep(im, sigma=5):
+    # im is PIL image
+    gauss1d = signal.windows.gaussian(15,std = sigma).reshape((-1,1))
+    s = filters.convolve(im,gauss1d)
+    return filters.convolve(s,gauss1d.T)
 
 
 def testGaussianFilter(im_clean, params):
@@ -121,6 +148,10 @@ def testGaussianFilter(im_clean, params):
         for filterSize in params['sd_gauss_filter']:
             imgs.append(np.array(im_dirty))
             imgs.append(gaussianFilter(im_dirty, filterSize))
+            # imgs.append(np.array(im_dirty))
+            imgs.append(explicitGaussianFilter(im_dirty, filterSize))
+            # imgs.append(np.array(im_dirty))
+            imgs.append(explicitGaussianFilterSep(im_dirty, filterSize))
     return imgs
 
 
@@ -165,7 +196,7 @@ bAllTests = False
 if bAllTests:
     tests = testsNoises + testsFilters
 else:
-    tests = ['testAverageFilter']
+    tests = ['testGaussianFilter']
 
 # -------------------------------------------------------------------
 # Dictionary of user-friendly names for each function ("test") name
