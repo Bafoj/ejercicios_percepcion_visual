@@ -15,6 +15,17 @@ from scipy import signal
 sys.path.append("../p1-4students")
 import visualPercepUtils as vpu
 
+def applyInEachDim(fun):
+    def wrapper(*args,**kargs):
+        if len(args[0].shape) == 2:
+            return fun(*args,**kargs)
+        else:
+            res = args[0].copy()
+            for i in range(args[0].shape[2]):
+                res[:,:,i] = fun(args[0][:,:,i],*args[1:],**kargs)
+            return res
+    return wrapper
+
 
 def evaluate_time(fun):
     import time
@@ -68,7 +79,7 @@ def testSandPNoise(im, percents):
 # -----------------
 # Gaussian noise
 # -----------------
-
+@applyInEachDim
 def addGaussianNoise(im, sd=5):
     return im + np.random.normal(loc=0, scale=sd, size=im.shape)
 
@@ -85,12 +96,12 @@ def testGaussianNoise(im, sigmas):
 # -------------------------
 # Average (or mean) filter
 # -------------------------
-
+@evaluate_time
 def averageFilter(im, filterSize):
     mask = np.ones((filterSize, filterSize))
     mask = np.divide(mask, np.sum(mask))
     return filters.convolve(im, mask)
-
+@evaluate_time
 def averageFilterSep(im, filterSize):
     mask = np.ones((1, filterSize))
     mask =mask / filterSize
@@ -109,9 +120,9 @@ def testAverageFilter(im_clean, params):
             b = averageFilterSep(im_dirty, filterSize)
             imgs.append(a)
             imgs.append(b)
-            # print(a)
-            # print(b)
-            # print(np.all(a == b))
+            print(a)
+            print(b)
+            print(np.all(a == b))
 
     return imgs
 
@@ -127,14 +138,14 @@ def gaussianFilter(im, sigma=5):
 @evaluate_time
 def explicitGaussianFilter(im, sigma=5):
     # im is PIL image
-    gaus1d = signal.windows.gaussian(15,std = sigma)
+    gaus1d = signal.windows.gaussian(15,std = sigma) * sigma
     gauss2d = np.outer(gaus1d,gaus1d.T)
     return filters.convolve(im,gauss2d)
 
 @evaluate_time
 def explicitGaussianFilterSep(im, sigma=5):
     # im is PIL image
-    gauss1d = signal.windows.gaussian(15,std = sigma).reshape((-1,1))
+    gauss1d = signal.windows.gaussian(15,std = sigma).reshape((-1,1)) * sigma
     s = filters.convolve(im,gauss1d)
     return filters.convolve(s,gauss1d.T)
 
@@ -192,7 +203,7 @@ else:
 
 testsNoises = ['testSandPNoise', 'testGaussianNoise']
 testsFilters = ['testAverageFilterSep', 'testGaussianFilter', 'testMedianFilter']
-bAllTests = False
+bAllTests = True
 if bAllTests:
     tests = testsNoises + testsFilters
 else:
@@ -225,7 +236,7 @@ gauss_sigmas_filter = [1.2]  # standard deviation for Gaussian filter
 avgFilter_sizes = [3, 7, 15]  # sizes of mean (average) filter
 medianFilter_sizes = [3, 7, 15]  # sizes of median filter
 
-testsUsingPIL = ['testSandPNoise']  # which test(s) uses PIL images as input (instead of NumPy 2D arrays)
+testsUsingPIL = ['testGaussianFilter']  # which test(s) uses PIL images as input (instead of NumPy 2D arrays)
 
 
 # -----------------------------------------
