@@ -128,14 +128,14 @@ def gaussianFilter(im, sigma=5):
 def explicitGaussianFilter(im, sigma=5):
     # im is PIL image
     gaus1d = signal.windows.gaussian(15,std = sigma)
-    gauss2d = np.outer(gaus1d,gaus1d.T)
+    gauss2d = np.outer(gaus1d,gaus1d.T) * sigma
     return filters.convolve(im,gauss2d)
 
 @evaluate_time
 def explicitGaussianFilterSep(im, sigma=5):
     # im is PIL image
     gauss1d = signal.windows.gaussian(15,std = sigma).reshape((-1,1))
-    s = filters.convolve(im,gauss1d)
+    s = filters.convolve(im,gauss1d)* sigma
     return filters.convolve(s,gauss1d.T)
 
 

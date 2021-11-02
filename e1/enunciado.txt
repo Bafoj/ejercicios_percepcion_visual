@@ -1,0 +1,15 @@
+1. (0.75 puntos) Completa la función HAN(im,n) para que devuelva el Histograma Acumulado Normalizado (HAN) de la imagen im
+   usando n intervalos de niveles de gris (i.e. n bins).
+   El HAN es como el histograma acumulado H(k) pero normalizado de modo que sus valores suman uno:
+   H(0)+H(1)+...+H(n-1) = 1
+   Se pide una solución sin bucles explícitos y que no recurra a cumsum() de NumPy.
+   Debes basarte en la función tri() de NumPy y en el producto matricial.
+
+2. (0.75 puntos) Completa la función multiHANhoriz(im,m,n) para que devuelva una lista de m HANs con n bins,
+   correspondientes a las m subimágenes que salen al dividir im en m franjas horizontales
+   consecutivas y sin solapar; cada franja es un conjunto de filas de im.
+   Para simplificar, asume que el número de filas de la imagen es múltiplo del número de franjas m.
+   Puedes usar un bucle explícito como máximo.
+   Como esta función depende de HAN(), si no resolvieras HAN(), devuelve la lista de m histogramas de n bins
+
+Ambas funciones se pueden escribir en 2-5 líneas de código cada una.
