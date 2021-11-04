@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PIL import Image
+from matplotlib import cm
 from scipy import signal
 from scipy.ndimage import filters
 import numpy.fft as fft
@@ -11,6 +12,7 @@ import math as math
 import glob
 import os
 import sys
+import time
 
 sys.path.append("../p1-4students")
 import visualPercepUtils as vpu
@@ -55,9 +57,12 @@ def avgFilter(filterSize):
     return mask / np.sum(mask)
 
 
-def gaussianFilter(filterSize: int, sigma=5):
-    gaus1d = signal.windows.gaussian(filterSize, std=sigma) * sigma
-    gauss2d = np.outer(gaus1d, gaus1d.T)
+def gaussianFilter(filterSize: int = 15, sigma=1.2):
+    gaus1d = signal.windows.gaussian(filterSize, std=sigma)
+    gauss2d = np.outer(gaus1d, gaus1d)
+    
+    # plt.imshow(gauss2d,cmap='gray')
+    # plt.show()
     return gauss2d
 
 
@@ -67,9 +72,10 @@ def averageFilterSpace(im, filterSize):
 
 
 def gaussianFilterSpace(im, filterSize):
-    gauss = gaussianFilter(5)
+    gauss = gaussianFilter()
     res = filters.convolve(im, gauss)
-    plt.imshow(res)
+    # plt.imshow(res)
+    # plt.show()
     return res
 
 def centerFilter(im, filterMask) -> np.ndarray:
@@ -155,7 +161,11 @@ def passBandFilter(shape, r=None, R=None):
     distToCenter = np.sqrt(vx ** 2.0 + vy ** 2.0)
     if R is None:  # low-pass filter assumed
         assert r is not None, "at least one size for filter is expected"
-        filter = distToCenter < r  # same as np.less(distToCenter, r)
+        subr = np.floor(r * 0.1)
+        u = r-distToCenter/subr
+        filter = distToCenter < (r - subr)  # same as np.less(distToCenter, r)
+        filter.astype(float) +
+
     elif r is None:  # high-pass filter assumed
         filter = distToCenter > R  # same as np.greater(distToCenter, R)
     else:  # both, R and r given, then band-pass filter
@@ -273,5 +283,23 @@ def doTests():
             vpu.showInGrid([im] + outs_np, title=nameTests[test] + subTitle)
 
 
+def measure_time(fun):
+    start = time.time()
+    fun()
+    end = time.time()
+    return end - start
+
+def compare_time():
+    im = np.array(Image.open('imgs-P3/lena255.pgm').convert("L"))
+    t_frequ = []
+    t_space = []
+    for i in range(3,20):
+        t_frequ.append(measure_time(lambda: averageFilterFrequency(im,i)))
+        t_space.append(measure_time(lambda: averageFilterSpace(im,i)))
+    vpu.showInGrid([np.array(t_frequ),np.array(t_space)], title='Comparación temporal')
+
+
+
 if __name__ == "__main__":
+    # compare_time()
     doTests()
