@@ -147,7 +147,12 @@ def testConvTheo(im, params=None):
 
     return [imFiltSpace, imFiltFreq, imFiltSpaceGauss,imFiltFreqGauss,]
 
-
+def dist_mat(shape):
+    m, n = shape
+    m2, n2 = np.floor(m / 2.0), np.floor(n / 2.0)
+    [vx, vy] = np.meshgrid(np.arange(-m2, m2 + 1), np.arange(-n2, n2 + 1))
+    distToCenter = np.sqrt(vx ** 2.0 + vy ** 2.0)
+    return distToCenter
 # -----------------------------------
 # High-, low- and band-pass filters
 # -----------------------------------
@@ -155,17 +160,10 @@ def testConvTheo(im, params=None):
 # generic band-pass filter (both, R and r, given) which includes the low-pass (r given, R not)
 # and the high-pass (R given, r not) as particular cases
 def passBandFilter(shape, r=None, R=None):
-    m, n = shape
-    m2, n2 = np.floor(m / 2.0), np.floor(n / 2.0)
-    [vx, vy] = np.meshgrid(np.arange(-m2, m2 + 1), np.arange(-n2, n2 + 1))
-    distToCenter = np.sqrt(vx ** 2.0 + vy ** 2.0)
+    distToCenter = dist_mat(shape)
     if R is None:  # low-pass filter assumed
         assert r is not None, "at least one size for filter is expected"
-        subr = np.floor(r * 0.1)
-        u = r-distToCenter/subr
-        filter = distToCenter < (r - subr)  # same as np.less(distToCenter, r)
-        filter.astype(float) +
-
+        filter = distToCenter < r # same as np.less(distToCenter, r)    
     elif r is None:  # high-pass filter assumed
         filter = distToCenter > R  # same as np.greater(distToCenter, R)
     else:  # both, R and r given, then band-pass filter
@@ -179,7 +177,7 @@ def passBandFilter(shape, r=None, R=None):
         "float"
     )  # convert from boolean to float. Not strictly required
 
-    bDisplay = True
+    bDisplay = False
     if bDisplay:
         plt.imshow(filter, cmap="gray")
         plt.show()
@@ -188,9 +186,31 @@ def passBandFilter(shape, r=None, R=None):
     return filter
 
 
+
+def smoothPassBandFilter(shape, r=None, R=None,u = 2):
+    dists = dist_mat(shape)
+    inc=dec=np.zeros(shape) 
+    if r != None and r>0:
+        print('inc')
+        m = 1/u
+        inc =0+m * (dists-(r-u))
+        plt.imshow(dists,cmap='gray')
+        plt.show()
+        inc = inc * np.logical_and(dists > (r-u),dists < r).astype(float)
+    if R != None and R>0:
+        print('de')
+        m = -1/u
+        dec = 1 + m * (dists-R)
+        dec = dec * np.logical_and(dists < R,dists > R+u).astype(float)
+    
+    res = passBandFilter(shape,r=r,R=R) + inc + dec
+    plt.imshow(res,cmap='gray')
+    plt.show()
+    return res
+
 def testBandPassFilter(im, params=None):
     r, R = params["r"], params["R"]
-    filterFreq = passBandFilter(
+    filterFreq = smoothPassBandFilter(
         im.shape, r, R
     )  # this filter is already in the frequency domain
     filterFreq = fft.ifftshift(
