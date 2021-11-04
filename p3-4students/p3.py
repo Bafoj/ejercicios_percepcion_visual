@@ -187,26 +187,27 @@ def passBandFilter(shape, r=None, R=None):
 
 
 
-def smoothPassBandFilter(shape, r=None, R=None,u = 2):
-    dists = dist_mat(shape)
+def smoothPassBandFilter(shape, r=None, R=None,u = 0):
     inc=dec=np.zeros(shape) 
-    if r != None and r>0:
-        print('inc')
-        m = 1/u
-        inc =0+m * (dists-(r-u))
-        plt.imshow(dists,cmap='gray')
-        plt.show()
-        inc = inc * np.logical_and(dists > (r-u),dists < r).astype(float)
-    if R != None and R>0:
-        print('de')
-        m = -1/u
-        dec = 1 + m * (dists-R)
-        dec = dec * np.logical_and(dists < R,dists > R+u).astype(float)
+    if u > 0:
+        dists = dist_mat(shape)
+        if r != None and r>0:
+            print('inc')
+            m = 1/u
+            inc =0+m * (dists-(r-u))
+            plt.imshow(dists,cmap='gray')
+            plt.show()
+            inc = inc * np.logical_and(dists >= (r-u),dists < r).astype(float)
+        if R != None and R>0:
+            print('de')
+            m = -1/u
+            dec = 1 + m * (dists-R)
+            dec = dec * np.logical_and(dists >= R,dists < R+u).astype(float)
     
     res = passBandFilter(shape,r=r,R=R) + inc + dec
-    plt.imshow(res,cmap='gray')
-    plt.show()
-    return res
+    # plt.imshow(res,cmap='gray')
+    # plt.show()
+    return res 
 
 def testBandPassFilter(im, params=None):
     r, R = params["r"], params["R"]
