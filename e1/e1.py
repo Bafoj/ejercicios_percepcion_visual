@@ -8,7 +8,11 @@ import glob
 def HAN(im, n):
     h, _ = np.histogram(im,bins=n)
     h_normalized = h / np.sum(h)
-    return np.tri(*h_normalized.shape).dot(h_normalized)
+    res =  np.tri(n).dot(h_normalized)
+    # Equivalentes
+    # res =  h_normalized.dot(np.tri(n)[::-1,::-1])
+    # res =  h_normalized.dot(np.triu(np.ones((n,n))))
+    return res
 
 def multiHANhoriz(im, m, n):
     tam_franja = np.ceil(im.shape[0]/m).astype(int)
