@@ -1,0 +1,33 @@
+Se desea detectar las aristas frontales de la cara superior de un cubo de Rubik. [Ver "result.png"]
+El programa "main.py" incluye parte del código y se apoya en "e2.py" para implementar el proceso que incluye tres partes:
+* detección de bordes
+* transformada de Hough
+* filtrado del espacio acumulador
+Además, hay algunas tareas auxiliares (carga de imagen, visualización).
+
+Completa "e2.py" con las siguientes indicaciones. Asume que las imágenes están representadas mediante arrays de NumPy.
+
+1. compute_edges(im) [5%]
+Dada la imagen 'im' en niveles de gris, la función debe calcular y devolver la imagen binaria de bordes aplicando un detector de Canny con una desviación estándar de la Gaussiana igual a 4, y umbrales 3 y 5 para la histéresis de umbral.
+
+2. compute_Hough_space_lines(edges) [5%]
+Dado el mapa de bordes binario ('edges'), esta función debe obtener el espacio acumulador de Hough para rectas, discretizando el parámetro theta (ángulo) de la ecuación normal de la recta con 220 valores uniformemente espaciados entre -pi/2 y pi/2 (radianes). La función debe devolver, además del propio espacio acumulador, los ángulos y las distancias (correspondientes a las dos dimensiones del espacio acumulador), en ese orden: acumulador, ángulos y distancias.
+
+3. filter_angles_hough(H, angles, target_angle, margin=5) [40%]
+El propósito de esta función es filtrar el espacio acumulador H dejando sus valores intactos para ángulos entre target_angle-margin y target_angle+margin, y reduciendo al 30% los valores de H correspondientes al resto de ángulos de 'angles'.
+Unidades: 'angles' en radianes, y target_angle y margin en grados.
+La función debe devolver el espacio acumulador modificado. Se da la primera y última línea del cuerpo de dicha función que hay que mantener.
+
+4. find_peaks_hough(H, thetas, rhos, nPeaksMax) [5%]
+Esta función debe obtener los picos en los votos del espacio acumulador 'H', dados los ángulos 'thetas' y 'rhos' devueltos en compute_Hough_space_lines(). El único aspecto que hay que indicar es devolver un máximo de 'nPeaksMax' picos. Debe devolver, en este orden, los valores de estos picos, así como los ángulos y distancias correspondientes a dichos picos.
+
+5. display_lines(im, thetas, rhos, values) [25%]
+Esta función debe mostrar sobre la imagen 'im' las rectas correspondientes a los ángulos ('thetas', en radianes) y distancias ('rhos') que tiene asociado unos votos 'values' del espacio acumulador. Se pide comprender la parte de la función que se proporciona y completar lo poco que falta.
+
+6. DESIRED_ANGLES [10%]
+Lista de valores de ángulos (en grados) necesarios para obtener el resultado que se muestra en 'result.png'.
+
+7. Completar con texto libre (debe ir en las correspondientes partes marcadas en el fichero e2.py). Se valora, además de respuestas razonables y razonadas, corrección lingüística, concisión y claridad. [10%]
+a) Si comparamos las rectas obtenidas con las aristas realmente deseadas, vemos que la precisión no es muy grande. ¿Por qué ocurre esto? Indica razonadamente al menos dos posibles motivos. 
+b) Esta solución es muy específica para esta imagen y no serviría para otras imágenes del cubo o ni siquiera para ligeras variantes de esta misma imagen. Enumera qué aspectos del código y suposiciones (implícitas) realizadas contribuyen a hacer la solución tan ajustada a esta imagen concreta y por tanto, poco útil en la práctica por no ser general.
+c) Una solución más robusta y general, podría aplicarse para muchas más imágenes del cubo de Rubik. Indica en qué problema la detección de estas aristas podría servir como parte de un proceso más completo, y en qué posible aplicación este proceso podría ser útil.

@@ -7,11 +7,13 @@ import glob
 
 def HAN(im, n):
     h, _ = np.histogram(im,bins=n)
-    h_normalized = h / np.sum(h)
-    res =  np.tri(n).dot(h_normalized)
+    
+    res =  np.tri(n).dot(h)
+    res = res / np.sum(res)
     # Equivalentes
     # res =  h_normalized.dot(np.tri(n)[::-1,::-1])
     # res =  h_normalized.dot(np.triu(np.ones((n,n))))
+    print(np.sum(res))
     return res
 
 def multiHANhoriz(im, m, n):

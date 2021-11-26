@@ -1,0 +1,105 @@
+'''
+Tus imports (los necesarios, no más)
+'''
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+def compute_edges(im):
+    '''
+    Tu código
+    '''
+
+
+def compute_Hough_space_lines(edges):
+    '''
+    Tu código
+    '''
+
+
+def filter_angles_hough(H, angles, target_angle, margin=5):
+    H2 = H.copy()
+    '''
+    Tu código
+    '''
+    return H2
+
+
+def find_peaks_hough(H, thetas, rhos, nPeaksMax):
+    '''
+    Tu código
+    '''
+
+
+def display_lines(im, thetas, rhos, values):
+    if len(im.shape) > 2:
+        H, W, C = im.shape
+    else:
+        H, W = im.shape
+    print(W, H)
+    plt.figure()
+    plt.axis('off')
+    plt.imshow(im, cmap='gray')
+    scale = 0.05
+    for theta, rho, strength in zip(thetas, rhos, values):
+        color = 'red' if theta > 0 else 'blue'
+        s = np.sin(theta)
+        c = np.cos(theta)
+        if np.abs(s) < np.abs(c):
+            x0 = (rho - 0 * s) / c
+            x1 = (rho - H * s) / c
+            x0, x1 = [min(W, max(x, 0)) for x in [x0, x1]]
+            plt.plot((x0, x1), (0, H), 'y.-', linewidth=scale * strength, color=color)
+        else:
+            '''
+            Tu código
+            '''
+            y0 = (rho - 0 * s) / c
+            y1 = (rho - W * s) / c
+            y0, y1 = [min(H, max(y, 0)) for y in [y0, y1]]
+            plt.plot((0, W), (y0, y1), 'y.-', linewidth=scale * strength, color=color)
+
+    return plt.gca()
+
+
+DESIRED_ANGLES = [''' tus valores ''']  # en grados
+
+'''
+-------------------------------------------------------------------------------
+Tu respuesta a 7a:
+
+Motivo 1.
+
+
+
+Motivo 2.
+
+
+
+
+[añade más motivos si procede]
+
+
+
+-------------------------------------------------------------------------------
+Tu respuesta a 7b:
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+Tu respuesta a 7c:
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+'''
