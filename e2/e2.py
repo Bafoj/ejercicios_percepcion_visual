@@ -62,35 +62,39 @@ DESIRED_ANGLES = [-46,46]  # en grados
 Tu respuesta a 7a:
 
 Motivo 1.
-
-
+    Uno de los principales motivos por los que creo que no es del todo preciso 
+    se debe a que se ha utilizado canny para detectar los bordes. Esta técnica al
+    usar una gausiana para suavizar tiende a alterar ligeramente las posiciones de
+    los bordes.
 
 Motivo 2.
+    Viendo los bordes de la imagen binaria, se puede observar que las líneas
+    negras que conforman los bordes no los ha detectado como tal, sino que
+    se han detectado los bordes de las casillas del cubo los cuales están
+    ligeramente desplazados.
 
-
-
-
-[añade más motivos si procede]
 
 
 
 -------------------------------------------------------------------------------
 Tu respuesta a 7b:
 
-
-
-
-
+Los aspectos del código que hacen que la solución sea tan específica son:
+    - El listado de ángulos 'DESIRED_ANGLES' contiene ángulos específicos
+      asociados al posicionamiento del cubo en la imagen.
+    - En el método compute_edges los valores del detector de Canny pueden
+      variar en función de las características de la foto
+      (luz, ruido, distancia...)
 
 
 
 -------------------------------------------------------------------------------
 Tu respuesta a 7c:
 
-
-
-
-
+Dado el hipotético caso en el que se quiera hacer un programa que a partir de
+una secuencia de fotos indique los pasos para resolver un cubo minimizando los
+movimientos, la detección de estas aristas podría servir para poder diferenciar
+las caras del cubo de Rubik para así facilitar su análisis.
 
 
 
