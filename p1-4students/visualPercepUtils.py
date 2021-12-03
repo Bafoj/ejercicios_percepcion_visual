@@ -30,7 +30,7 @@ def showInFigs(imgs,title, nFig=None,bDisplay=False):
         plt.imshow(im,cmap='gray',interpolation=None)#, aspect=1/1.5)#, vmin=0,vmax=255)
         plt.title(title)
     if bDisplay:
-        plt.showb(block=True)
+        plt.show(block=True)
     return i
 
 def showInGrid(imgs, m=None, n=None, title="",subtitles=None):
