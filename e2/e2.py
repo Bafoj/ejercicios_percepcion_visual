@@ -85,6 +85,9 @@ Los aspectos del código que hacen que la solución sea tan específica son:
     - En el método compute_edges los valores del detector de Canny pueden
       variar en función de las características de la foto
       (luz, ruido, distancia...)
+    - En el método compute_Hough_space_lines se utiliza el método hough_line. Este recibe
+      un valor fijo para theta y esto puede variar en función del posicionamiento del objeto
+      en la foto.
 
 
 
