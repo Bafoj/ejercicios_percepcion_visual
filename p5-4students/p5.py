@@ -61,7 +61,8 @@ def labelConnectedComponents(im, params=None):
     return [binIm, measure.label(binIm, background=0)]
 
 def reportPropertiesRegions(labelIm):
-    regions = measure.regionprops(labelIm)
+    regions:list[ measure._regionprops.RegionProperties] = measure.regionprops(labelIm)
+   
     for r, region in enumerate(regions):  # enumerate() is often handy: it provides both the index and the element
         print("Region", r + 1, "(label", str(region.label) + ")")
         print("\t area: ", region.area)

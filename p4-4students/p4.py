@@ -64,7 +64,7 @@ def findPeaks(H, thetas, rhos, nPeaksMax=None):
 
 def HOG(im:np.ndarray,n_bins=5):
     gx,gy = filters.sobel(im, 0),filters.sobel(im, 1)
-    di = np.arctan2(gx,gy)
+    di = np.arctan2(gy,gx)
     # di[di == np.nan] = 0
     # print(di)
     # print(np.unique(di))

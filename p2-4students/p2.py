@@ -202,7 +202,7 @@ else:
 # --------------------
 
 testsNoises = ['testSandPNoise', 'testGaussianNoise']
-testsFilters = ['testAverageFilterSep', 'testGaussianFilter', 'testMedianFilter']
+testsFilters = ['testAverageFilter', 'testGaussianFilter', 'testMedianFilter']
 bAllTests = True
 if bAllTests:
     tests = testsNoises + testsFilters
@@ -280,8 +280,10 @@ def doTests():
                 outs_np = eval(test)(im, params)
                 print("num images", len(outs_np))
             print(len(outs_np))
+            print(outs_np)
+            outs_np = vpu.pil2np(outs_np)
             # display original image, noisy images and filtered images
-            vpu.showInGrid([im] + outs_np, title=nameTests[test] + subTitle)
+            vpu.showInGrid(np.array([im] + outs_np), title=nameTests[test] + subTitle)
 
 if __name__ == "__main__":
     doTests()
