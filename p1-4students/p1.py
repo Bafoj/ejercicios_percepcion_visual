@@ -144,8 +144,8 @@ def doTests():
 
 
 if __name__== "__main__":
-    # doTests()
-    img = np.array(Image.open('imgs-P1/iglesia.pgm').convert('L'))
-    # print(type(multiHist(img)))
-    vpu.showInGrid(multiHist(img,4))
+    doTests()
+    # img = np.array(Image.open('imgs-P1/iglesia.pgm').convert('L'))
+    # print((multiHist(img)))
+    # vpu.showInGrid(multiHist(img,4))
 

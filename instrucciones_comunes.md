@@ -56,3 +56,9 @@
         ```py
         from skimage.morphology import opening,closing, square...
         ```
+    - Area conexa:
+        ```py
+        from skimage.measure import label,regionprops
+        measure.label(binIm, background=0)
+        regions:list[ measure._regionprops.RegionProperties] = measure.regionprops(labelIm)
+        ```
